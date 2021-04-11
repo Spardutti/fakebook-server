@@ -103,7 +103,7 @@ exports.friendRequest = (req, res, next) => {
       //push the requesting user to the request id
       $push: {
         request: {
-          $each: [req.user],
+          $each: [{ user: req.user }],
           $position: 0,
         },
       },
@@ -118,7 +118,7 @@ exports.friendRequest = (req, res, next) => {
 
 // ACCEPT FRIEND REQUEST
 exports.acceptFriend = (req, res, next) => {
-  //GET THE CURRENT USER REQUEST
+  //GET THE CURRENT USER REQUESTs ARRAY
   User.findById(req.params.id, (err, user) => {
     if (err) return next(err);
     //SEND THE INDEX OF THE REQUEST IN THE BODY
@@ -132,3 +132,17 @@ exports.acceptFriend = (req, res, next) => {
     res.json(user);
   });
 };
+
+//DECLINE FRIEND REQUEST
+exports.rejectFriend = (req, res, next) => {
+  //GET THE CURRENT USER
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    //GET THE INDEX OF THE REQUEST TO REJECT
+    user.request.splice(req.body.index, 1);
+    user.save();
+    res.json(user);
+  });
+};
+
+//DELETE FRIEND

@@ -21,4 +21,7 @@ router.put("/users/request", userController.friendRequest);
 //ACCEPT FRIEND REQUEST
 router.put("/users/:id/accept", userController.acceptFriend);
 
+//DECLINE FRIEND REQUEST
+router.put("/users/:id/reject", userController.rejectFriend);
+
 module.exports = router;
