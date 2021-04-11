@@ -73,6 +73,7 @@ exports.createUser = [
   },
 ];
 
+//LOGIN USER
 exports.userLogin = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) return next(err);
@@ -91,4 +92,43 @@ exports.userLogin = (req, res, next) => {
       });
     }
   })(req, res, next);
+};
+
+//SEND FRIEND REQUEST
+exports.friendRequest = (req, res, next) => {
+  //Find the user to receive de friend request
+  User.findByIdAndUpdate(
+    req.body.id,
+    {
+      //push the requesting user to the request id
+      $push: {
+        request: {
+          $each: [req.user],
+          $position: 0,
+        },
+      },
+    },
+    { new: true },
+    (err, result) => {
+      if (err) return next(err);
+      res.json(result);
+    }
+  );
+};
+
+// ACCEPT FRIEND REQUEST
+exports.acceptFriend = (req, res, next) => {
+  //GET THE CURRENT USER REQUEST
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    //SEND THE INDEX OF THE REQUEST IN THE BODY
+    let userRequesting = user.request[req.body.index];
+    //ADD THE USER TO THE FRIENDS ARRAY
+    user.friends.unshift(userRequesting);
+    //REMOVE THE REQUEST
+    user.request.splice(req.body.index, 1);
+    //SAVE THE USER
+    user.save();
+    res.json(user);
+  });
 };

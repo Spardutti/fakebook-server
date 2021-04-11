@@ -15,4 +15,10 @@ router.post("/users", userController.createUser);
 //LOG IN USER
 router.post("/users/login", userController.userLogin);
 
+//SEND FRIEND REQUEST
+router.put("/users/request", userController.friendRequest);
+
+//ACCEPT FRIEND REQUEST
+router.put("/users/:id/accept", userController.acceptFriend);
+
 module.exports = router;
