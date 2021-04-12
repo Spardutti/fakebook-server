@@ -10,18 +10,21 @@ const jwtProtected = passport.authenticate("jwt", { session: false });
 //////////////////////////////////////////////// USER ROUTES ///////////////////////
 
 //CREATE A NEW USER
-router.post("/users", userController.createUser);
+router.post("/", userController.createUser);
 
 //LOG IN USER
-router.post("/users/login", userController.userLogin);
+router.post("/login", userController.userLogin);
 
 //SEND FRIEND REQUEST
-router.put("/users/request", userController.friendRequest);
+router.put("/:id/request", jwtProtected, userController.friendRequest);
 
 //ACCEPT FRIEND REQUEST
-router.put("/users/:id/accept", userController.acceptFriend);
+router.put("/:id/accept", userController.acceptFriend);
 
 //DECLINE FRIEND REQUEST
-router.put("/users/:id/reject", userController.rejectFriend);
+router.put("/:id/reject", userController.rejectFriend);
+
+//DELETE FRIEND
+router.put("/:id/delete", userController.deleteFriend);
 
 module.exports = router;

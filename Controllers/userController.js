@@ -98,7 +98,7 @@ exports.userLogin = (req, res, next) => {
 exports.friendRequest = (req, res, next) => {
   //Find the user to receive de friend request
   User.findByIdAndUpdate(
-    req.body.id,
+    req.params.id,
     {
       //push the requesting user to the request id
       $push: {
@@ -146,3 +146,11 @@ exports.rejectFriend = (req, res, next) => {
 };
 
 //DELETE FRIEND
+exports.deleteFriend = (req, res, next) => {
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    user.friends.splice(req.body.indes, 1);
+    user.save();
+    res.json(user);
+  });
+};
