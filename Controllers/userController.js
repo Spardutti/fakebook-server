@@ -6,8 +6,6 @@ const passport = require("passport");
 require("dotenv").config();
 const async = require("async");
 
-//TODO ADD MULTER TO UPLOAD FILES TO PUBLIC/IMAGES TO SET AVATAR
-
 //Validates and create a new user
 exports.createUser = [
   body("email")
