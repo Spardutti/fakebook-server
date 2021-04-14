@@ -15,7 +15,7 @@ exports.newPost = [
       let post = new Post({
         title: req.body.title,
         body: req.body.title,
-        image: req.body.image,
+        image: req.file.path,
         author: req.user,
       }).save((err, post) => {
         if (err) return next(errors);
@@ -38,6 +38,7 @@ exports.updatePost = (req, res, next) => {
   Post.findById(req.params.id, (err, post) => {
     (post.title = req.body.title),
       (post.body = req.body.body),
+      (post.image = req.body.image),
       (post.link = req.body.link);
     post.save((err) => {
       if (err) return next(err);
@@ -75,6 +76,15 @@ exports.newPostComment = (req, res, next) => {
 };
 
 //DELETE COMMENT
+exports.deleteComment = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(errors);
+    let index = req.body.index;
+    post.comments.splice(index, 1);
+    post.save();
+    res.json(post);
+  });
+};
 
 //ADD A REPLY TO A COMMENT
 exports.newReply = (req, res, next) => {
@@ -85,6 +95,19 @@ exports.newReply = (req, res, next) => {
       author: req.user.username,
       reply: req.body.reply,
     });
+    post.save();
+    res.json(post);
+  });
+};
+
+//DELETE REPLY
+exports.deleteReply = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
+    const commentIndex = req.body.commentIndex;
+    const replyIndex = req.body.replyIndex;
+    //get the reply to delete
+    post.comments[commentIndex].reply.splice(replyIndex, 1);
     post.save();
     res.json(post);
   });
