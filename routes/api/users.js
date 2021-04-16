@@ -25,7 +25,7 @@ const jwtProtected = passport.authenticate("jwt", { session: false });
 //////////////////////////////////////////////// USER ROUTES ///////////////////////
 
 //CREATE A NEW USER
-router.post("/", userController.createUser);
+router.post("/new", userController.createUser);
 
 //LOG IN USER
 router.post("/login", userController.userLogin);
@@ -48,5 +48,8 @@ router.post(
   upload.single("profilePic"),
   userController.changeProfilePic
 );
+
+//LOGOUT
+router.post("/logout", userController.logout);
 
 module.exports = router;

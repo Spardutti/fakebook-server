@@ -77,8 +77,10 @@ exports.createUser = [
 exports.userLogin = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) return next(err);
-    if (!user) res.json("user not found");
-    else {
+    if (!user) {
+      res.status(401);
+      res.json("Wrong username or password");
+    } else {
       req.login(user, { session: false }, (err) => {
         if (err) return next(err);
         const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
@@ -103,7 +105,7 @@ exports.friendRequest = (req, res, next) => {
       //push the requesting user to the request id
       $push: {
         request: {
-          $each: [{ user: req.user }],
+          $each: [{ user: req.user, username: req.username }],
           $position: 0,
         },
       },
@@ -159,10 +161,16 @@ exports.deleteFriend = (req, res, next) => {
 exports.changeProfilePic = (req, res, next) => {
   User.findByIdAndUpdate(
     req.params.id,
-    { profilePic: req.file.path },
+    { profilePic: "/images/" + req.file.filename },
     { new: true },
     (err, user) => {
       res.json(user);
     }
   );
+};
+
+//LOG OUT
+exports.logout = (req, res, next) => {
+  req.logout();
+  res.json("loged out");
 };
