@@ -52,4 +52,7 @@ router.post(
 //LOGOUT
 router.post("/logout", userController.logout);
 
+//GET ALL USERS TEST
+router.get("/:id/all", userController.getNonFriends);
+
 module.exports = router;

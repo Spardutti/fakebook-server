@@ -127,11 +127,16 @@ exports.acceptFriend = (req, res, next) => {
     let userRequesting = user.request[req.body.index];
     //ADD THE USER TO THE FRIENDS ARRAY
     user.friends.unshift(userRequesting);
-    //REMOVE THE REQUEST
-    user.request.splice(req.body.index, 1);
-    //SAVE THE USER
-    user.save();
-    res.json(user);
+    User.findById(userRequesting.user, (err, otherUser) => {
+      if (err) return next(err);
+      otherUser.friends.unshift(user);
+      //REMOVE THE REQUEST
+      user.request.splice(req.body.index, 1);
+      //SAVE THE USER
+      otherUser.save();
+      user.save();
+      res.json(user);
+    });
   });
 };
 
@@ -173,4 +178,31 @@ exports.changeProfilePic = (req, res, next) => {
 exports.logout = (req, res, next) => {
   req.logout();
   res.json("loged out");
+};
+
+//GET ALL NON FRIENDS USERS
+exports.getNonFriends = (req, res, next) => {
+  //FIND CURRENT USER
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    else {
+      //FIND ALL USER XEPT FOR THE CURRENT USER
+      User.find({ _id: { $ne: req.params.id } }, (err, users) => {
+        if (err) return next(err);
+        let nonFriends = [];
+        users.forEach((friend) => {
+          //ThE ARRAY HAVE TO ELEMENTS _ID & USER. WE MAP THE ARRAY TO GET
+          //THE USER AND SEARCH THE INDEX OF IT BY THE ID OF THE FRIEND USER
+          if (user.friends.map((e) => e.user).indexOf(friend._id) === -1) {
+            nonFriends.push(friend);
+          }
+        });
+        //SPLICE THE ARRAY TO ONLY SHOW 4 FRIENDS
+        if (nonFriends.length > 4) {
+          nonFriends.splice(4);
+        }
+        res.json(nonFriends);
+      });
+    }
+  });
 };
