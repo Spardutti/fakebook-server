@@ -105,7 +105,7 @@ exports.friendRequest = (req, res, next) => {
       //push the requesting user to the request id
       $push: {
         request: {
-          $each: [{ user: req.user, username: req.username }],
+          $each: [{ user: req.user, username: req.user.username }],
           $position: 0,
         },
       },
@@ -127,9 +127,10 @@ exports.acceptFriend = (req, res, next) => {
     let userRequesting = user.request[req.body.index];
     //ADD THE USER TO THE FRIENDS ARRAY
     user.friends.unshift(userRequesting);
+    //FIND THE USER THAT SENT THE REQUEST
     User.findById(userRequesting.user, (err, otherUser) => {
       if (err) return next(err);
-      otherUser.friends.unshift(user);
+      otherUser.friends.unshift({ user: user, username: user.username });
       //REMOVE THE REQUEST
       user.request.splice(req.body.index, 1);
       //SAVE THE USER
