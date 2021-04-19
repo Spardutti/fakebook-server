@@ -207,3 +207,11 @@ exports.getNonFriends = (req, res, next) => {
     }
   });
 };
+
+//GET ALL FRIENDSHIP REQUESTING USERS
+exports.getAllFriendRequest = (req, res, next) => {
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    res.json(user.request);
+  });
+};
