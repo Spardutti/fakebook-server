@@ -6,6 +6,14 @@ const passport = require("passport");
 require("dotenv").config();
 const async = require("async");
 
+//GET CURRENT USER
+exports.currentUser = (req, res, next) => {
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    res.json(user);
+  });
+};
+
 //Validates and create a new user
 exports.createUser = [
   body("email")
@@ -157,7 +165,7 @@ exports.rejectFriend = (req, res, next) => {
 exports.deleteFriend = (req, res, next) => {
   User.findById(req.params.id, (err, user) => {
     if (err) return next(err);
-    user.friends.splice(req.body.indes, 1);
+    user.friends.splice(req.body.index, 1);
     user.save();
     res.json(user);
   });
@@ -213,5 +221,13 @@ exports.getAllFriendRequest = (req, res, next) => {
   User.findById(req.params.id, (err, user) => {
     if (err) return next(err);
     res.json(user.request);
+  });
+};
+
+//GET FRIENDS LIST
+exports.getAllFriends = (req, res, next) => {
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    res.json(user.friends);
   });
 };

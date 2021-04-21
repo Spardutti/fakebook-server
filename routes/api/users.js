@@ -27,6 +27,9 @@ const jwtProtected = passport.authenticate("jwt", { session: false });
 //CREATE A NEW USER
 router.post("/new", userController.createUser);
 
+//GET CURRENT USER
+router.get("/:id/current", userController.currentUser);
+
 //LOG IN USER
 router.post("/login", userController.userLogin);
 
@@ -55,6 +58,10 @@ router.post("/logout", userController.logout);
 //GET ALL NON FRIEND USERS
 router.get("/:id/all", userController.getNonFriends);
 
+//GET ALL REQUESTING USER
 router.get("/:id/requesting", userController.getAllFriendRequest);
+
+//GET FRIENDLIST
+router.get("/:id/friends", userController.getAllFriends);
 
 module.exports = router;
