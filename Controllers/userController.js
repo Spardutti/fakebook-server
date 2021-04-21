@@ -173,14 +173,17 @@ exports.deleteFriend = (req, res, next) => {
 
 //CHANGE PROFILE PIC
 exports.changeProfilePic = (req, res, next) => {
-  User.findByIdAndUpdate(
-    req.params.id,
-    { profilePic: "/images/" + req.file.filename },
-    { new: true },
-    (err, user) => {
-      res.json(user);
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    if (user.profilePic === "/images/Fakebook.png") {
+      user.profilePic = "/images/" + req.file.filename;
+      user.save();
+      res.json("avatar uploaded");
+    } else {
+      //find a way to delete the file at path
+      // /images/req.file.filename
     }
-  );
+  });
 };
 
 //LOG OUT
