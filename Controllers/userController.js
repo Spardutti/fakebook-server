@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 require("dotenv").config();
 const async = require("async");
+const fs = require("fs");
 
 //GET CURRENT USER
 exports.currentUser = (req, res, next) => {
@@ -180,6 +181,12 @@ exports.changeProfilePic = (req, res, next) => {
       user.save();
       res.json("avatar uploaded");
     } else {
+      fs.unlink("public" + user.profilePic, (err) => {
+        if (err) return next(err);
+        user.profilePic = "/images/" + req.file.filename;
+        user.save();
+        res.json(user);
+      });
       //find a way to delete the file at path
       // /images/req.file.filename
     }

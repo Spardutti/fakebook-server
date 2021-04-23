@@ -3,22 +3,29 @@ const { body, validationResult } = require("express-validator");
 
 //CREATE A NEW POST
 exports.newPost = [
-  body("title").isLength({ min: 1 }).withMessage("Please specify a title"),
-  body("body")
-    .isLength({ min: 4 })
-    .withMessage("Please enter a brief description"),
+  body("title").notEmpty().withMessage("Title requierd"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.json({ errors: errors.array() });
     } else {
-      let post = new Post({
-        title: req.body.title,
-        body: req.body.title,
-        image: req.file.path,
-        author: req.user,
-      }).save((err, post) => {
-        if (err) return next(errors);
+      let post;
+      if (req.file) {
+        post = new Post({
+          title: req.body.title,
+          body: req.body.body,
+          author: req.user,
+          image: req.file.filename,
+        });
+      } else {
+        post = new Post({
+          title: req.body.title,
+          body: req.body.body,
+          author: req.user,
+        });
+      }
+      post.save((err, post) => {
+        if (err) return next(err);
         res.json(post);
       });
     }
