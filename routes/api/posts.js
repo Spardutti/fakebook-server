@@ -27,6 +27,11 @@ router.post(
   upload.single("image"),
   postController.newPost
 );
+//GET CURRENT USER POSTS
+router.get("/:id/posts", postController.currentUserPost);
+
+//GET FRIENDS AND CURRENT USER POSTS
+router.get("/:id/home", postController.friendsPosts);
 
 //DELETE A POST
 router.delete("/delete/:id", jwtProtected, postController.deletePost);

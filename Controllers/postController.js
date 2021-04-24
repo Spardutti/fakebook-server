@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 
 //CREATE A NEW POST
@@ -117,5 +118,30 @@ exports.deleteReply = (req, res, next) => {
     post.comments[commentIndex].reply.splice(replyIndex, 1);
     post.save();
     res.json(post);
+  });
+};
+
+//GET CURRENT USER POST
+exports.currentUserPost = (req, res, next) => {
+  Post.find({ author: req.params.id }, (err, posts) => {
+    if (err) return next(err);
+    res.json(posts);
+  });
+};
+
+//GET FRIENDS AND CURRENT USER POST
+exports.friendsPosts = (req, res, next) => {
+  User.findById(req.params.id, (err, user) => {
+    if (err) return next(err);
+    //MAKE IT ASYNC
+    user.friends.map((friend) => {
+      Post.find(
+        { author: { $in: [req.params.id, friend.user] } },
+        (err, post) => {
+          if (err) return next(err);
+          res.json(post);
+        }
+      );
+    });
   });
 };
