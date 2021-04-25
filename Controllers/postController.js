@@ -17,7 +17,7 @@ exports.newPost = [
           title: req.body.title,
           body: req.body.body,
           author: req.user,
-          image: req.file.filename,
+          image: "/images/" + req.file.filename,
         });
       } else {
         post = new Post({
