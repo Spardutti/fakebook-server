@@ -67,10 +67,18 @@ exports.deletePost = (req, res, next) => {
 exports.updatePost = (req, res, next) => {
   Post.findById(req.params.id, (err, post) => {
     if (err) return next(err);
-    (post.title = req.body.title),
-      (post.body = req.body.body),
-      (post._id = req.params.id),
-      (post.author = req.user);
+    if (req.file) {
+      (post.title = req.body.title),
+        (post.body = req.body.body),
+        (post._id = req.params.id),
+        (post.author = req.user),
+        (post.image = "/images/" + req.file.filename);
+    } else {
+      (post.title = req.body.title),
+        (post.body = req.body.body),
+        (post._id = req.params.id),
+        (post.author = req.user);
+    }
     post.save((err) => {
       if (err) return next(err);
       else {
