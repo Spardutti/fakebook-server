@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
+const async = require("async");
 
 //CREATE A NEW POST
 exports.newPost = [
@@ -131,17 +132,27 @@ exports.currentUserPost = (req, res, next) => {
 
 //GET FRIENDS AND CURRENT USER POST
 exports.friendsPosts = (req, res, next) => {
+  let friendPosts = [];
   User.findById(req.params.id, (err, user) => {
     if (err) return next(err);
-    //MAKE IT ASYNC
-    user.friends.map((friend) => {
-      Post.find(
-        { author: { $in: [req.params.id, friend.user] } },
-        (err, post) => {
-          if (err) return next(err);
-          res.json(post);
-        }
-      );
-    });
+    async.forEach(
+      user.friends,
+      (friend, callback) => {
+        Post.find(
+          //this will find an array of matches
+          { author: { $in: [req.params.id, friend.user] } },
+          (err, post) => {
+            if (err) return next(err);
+            friendPosts.push(post);
+            callback();
+          }
+        );
+      },
+      (err) => {
+        if (err) return next(err);
+        //return [0] to avoid duplicates
+        res.json(friendPosts[0]);
+      }
+    );
   });
 };
