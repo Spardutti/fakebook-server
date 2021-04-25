@@ -7,7 +7,7 @@ const PostSchema = new Schema({
   image: { type: String },
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: Date, default: Date.now() },
-  votes: { type: Number, default: 0 },
+  votes: [{ type: Schema.Types.ObjectId, res: "User" }],
   link: String,
   comments: [
     {

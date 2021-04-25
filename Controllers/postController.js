@@ -34,6 +34,27 @@ exports.newPost = [
   },
 ];
 
+//LIKE POST
+exports.likePost = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
+    post.votes.push(req.user);
+    post.save();
+    res.json(post);
+  });
+};
+
+//UNLIKE POST
+exports.unlikePost = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
+    let index = post.votes.indexOf(req.user._id);
+    post.votes.splice(index, 1);
+    post.save();
+    res.json(post);
+  });
+};
+
 //DELETE POST
 exports.deletePost = (req, res, next) => {
   Post.findByIdAndRemove(req.params.id, (err, result) => {
@@ -45,10 +66,11 @@ exports.deletePost = (req, res, next) => {
 //EDIT POST
 exports.updatePost = (req, res, next) => {
   Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
     (post.title = req.body.title),
       (post.body = req.body.body),
-      (post.image = req.body.image),
-      (post.link = req.body.link);
+      (post._id = req.params.id),
+      (post.author = req.user);
     post.save((err) => {
       if (err) return next(err);
       else {

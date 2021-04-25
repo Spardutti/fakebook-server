@@ -33,11 +33,22 @@ router.get("/:id/posts", postController.currentUserPost);
 //GET FRIENDS AND CURRENT USER POSTS
 router.get("/:id/home", postController.friendsPosts);
 
+//ADD LIKE TO POST
+router.put("/:id/like", jwtProtected, postController.likePost);
+
+//UNLIKE POST
+router.put("/:id/unlike", jwtProtected, postController.unlikePost);
+
 //DELETE A POST
-router.delete("/delete/:id", jwtProtected, postController.deletePost);
+router.delete("/:id/delete", jwtProtected, postController.deletePost);
 
 //EDIT POST
-router.put("/edit/:id", jwtProtected, postController.updatePost);
+router.put(
+  "/:id/edit",
+  jwtProtected,
+  upload.single("image"),
+  postController.updatePost
+);
 
 //ADD A NEW COMMENT TO POST
 router.put("/comment/:id", jwtProtected, postController.newPostComment);
