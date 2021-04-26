@@ -18,12 +18,14 @@ exports.newPost = [
           body: req.body.body,
           author: req.user,
           image: "/images/" + req.file.filename,
+          username: req.user.username,
         });
       } else {
         post = new Post({
           title: req.body.title,
           body: req.body.body,
           author: req.user,
+          username: req.user.username,
         });
       }
       post.save((err, post) => {
@@ -97,9 +99,11 @@ exports.newPostComment = (req, res, next) => {
         comments: {
           $each: [
             {
-              author: req.user.username,
+              author: req.user,
+              profilePic: req.user.profilePic,
               comment: req.body.body,
-              date: Date.now(),
+              username: req.user.username,
+              date: new Date(Date.now()),
             },
           ],
           $position: 0,

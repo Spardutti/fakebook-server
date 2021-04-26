@@ -51,7 +51,7 @@ router.put(
 );
 
 //ADD A NEW COMMENT TO POST
-router.put("/comment/:id", jwtProtected, postController.newPostComment);
+router.put("/:id/comment", jwtProtected, postController.newPostComment);
 
 //ADD A REPLY TO A COMMENT
 router.put("/comment/:id/reply", jwtProtected, postController.newReply);

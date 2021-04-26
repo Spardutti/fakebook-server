@@ -6,17 +6,21 @@ const PostSchema = new Schema({
   body: { type: String },
   image: { type: String },
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  date: { type: Date, default: Date.now() },
+  username: String,
+  date: { type: Date, default: new Date(Date.now()) },
   votes: [{ type: Schema.Types.ObjectId, res: "User" }],
   link: String,
   comments: [
     {
-      author: { type: String },
+      author: { type: Schema.Types.ObjectId, ref: "User" },
+      profilePic: String,
+      username: { type: String },
       comment: { type: String },
       date: { type: Date, default: Date.now() },
       reply: [
         {
-          author: String,
+          author: { type: Schema.Types.ObjectId, ref: "User" },
+          username: String,
           reply: String,
           date: { type: Date, default: Date.now() },
         },
