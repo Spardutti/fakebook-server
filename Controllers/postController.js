@@ -106,7 +106,6 @@ exports.newPostComment = (req, res, next) => {
               date: new Date(Date.now()),
             },
           ],
-          $position: 0,
         },
       },
     },
@@ -135,11 +134,35 @@ exports.newReply = (req, res, next) => {
     if (err) return next(err);
     let index = req.body.index;
     post.comments[index].reply.push({
-      author: req.user.username,
+      username: req.user.username,
+      author: req.user,
       reply: req.body.reply,
     });
     post.save();
     res.json(post);
+  });
+};
+
+//EDIT POST COMMENT
+exports.editComment = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
+    let index = req.body.index;
+    post.comments[index].comment = req.body.comment;
+    post.save();
+    res.json(post.comments);
+  });
+};
+
+//EDIT REPLY COMMENT
+exports.editReply = (req, res, next) => {
+  Post.findById(req.params.id, (err, post) => {
+    if (err) return next(err);
+    let commentIndex = req.body.commentIndex;
+    let replyIndex = req.body.replyIndex;
+    post.comments[commentIndex].reply[replyIndex].reply = req.body.reply;
+    post.save();
+    res.json(post.comments);
   });
 };
 

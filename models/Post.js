@@ -22,7 +22,7 @@ const PostSchema = new Schema({
           author: { type: Schema.Types.ObjectId, ref: "User" },
           username: String,
           reply: String,
-          date: { type: Date, default: Date.now() },
+          date: { type: Date, default: new Date(Date.now()) },
         },
       ],
     },

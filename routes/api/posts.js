@@ -53,11 +53,17 @@ router.put(
 //ADD A NEW COMMENT TO POST
 router.put("/:id/comment", jwtProtected, postController.newPostComment);
 
-//ADD A REPLY TO A COMMENT
-router.put("/comment/:id/reply", jwtProtected, postController.newReply);
-
 //DELETE A COMMENT
 router.delete("/comment/:id", jwtProtected, postController.deleteComment);
+
+//EDIT A COMMENT
+router.put("/comment/:id", postController.editComment);
+
+//ADD A REPLY TO A COMMENT
+router.put("/:id/reply", jwtProtected, postController.newReply);
+
+//EDIT REPLY
+router.put("/:id/comment/reply", postController.editReply);
 
 //DELETE A REPLY
 router.delete("/comment/:id/reply", jwtProtected, postController.deleteReply);
