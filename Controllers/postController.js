@@ -2,6 +2,7 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 const async = require("async");
+const ObjectId = require("mongodb").ObjectId;
 
 //CREATE A NEW POST
 exports.newPost = [
@@ -119,13 +120,21 @@ exports.newPostComment = (req, res, next) => {
 
 //DELETE COMMENT
 exports.deleteComment = (req, res, next) => {
+  Post.updateOne(
+    { _id: req.params.id },
+    { $pull: { comments: { _id: req.body.id } } },
+    (err, result) => {
+      res.json(result);
+    }
+  );
+  /*
   Post.findById(req.params.id, (err, post) => {
     if (err) return next(errors);
     let index = req.body.index;
     post.comments.splice(index, 1);
     post.save();
     res.json(post);
-  });
+  });*/
 };
 
 //ADD A REPLY TO A COMMENT
@@ -187,28 +196,30 @@ exports.currentUserPost = (req, res, next) => {
   });
 };
 
-//GET FRIENDS AND CURRENT USER POST
+//GET CURRENT USER AND FRIENDS POST
 exports.friendsPosts = (req, res, next) => {
-  let friendPosts = [];
+  let ids = [];
+  let postToShow = [];
   User.findById(req.params.id, (err, user) => {
     if (err) return next(err);
+    ids.push(user._id);
+    user.friends.map((friend) => {
+      ids.push(friend.user);
+    });
     async.forEach(
-      user.friends,
-      (friend, callback) => {
-        Post.find(
-          //this will find an array of matches
-          { author: { $in: [req.params.id, friend.user] } },
-          (err, post) => {
-            if (err) return next(err);
-            friendPosts.push(post);
-            callback();
+      ids,
+      (post, callback) => {
+        Post.find({ author: ObjectId(post) }, (err, posts) => {
+          if (err) return next(err);
+          if (posts.length > 0) {
+            postToShow.push(posts);
           }
-        );
+          callback();
+        });
       },
       (err) => {
         if (err) return next(err);
-        //return [0] to avoid duplicates
-        res.json(friendPosts[0]);
+        res.json(postToShow);
       }
     );
   });
