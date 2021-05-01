@@ -93,48 +93,29 @@ exports.updatePost = (req, res, next) => {
 
 //ADD POST COMMENT
 exports.newPostComment = (req, res, next) => {
-  Post.findByIdAndUpdate(
-    req.params.id,
-    {
-      $push: {
-        comments: {
-          $each: [
-            {
-              author: req.user,
-              profilePic: req.user.profilePic,
-              comment: req.body.body,
-              username: req.user.username,
-              date: new Date(Date.now()),
-            },
-          ],
-        },
-      },
-    },
-    { new: true },
-    (err, result) => {
-      if (err) return next(err);
-      res.json(result);
-    }
-  );
+  Post.findById(req.params.id, (err, post) => {
+    const newComment = {
+      author: req.user._id,
+      profilePic: req.user.profilePic,
+      comment: req.body.comment,
+      username: req.user.username,
+      date: new Date(Date.now()),
+    };
+    post.comments.push(newComment);
+    if (err) return next(err);
+    post.save();
+    res.json(newComment);
+  });
 };
 
 //DELETE COMMENT
 exports.deleteComment = (req, res, next) => {
-  Post.updateOne(
-    { _id: req.params.id },
-    { $pull: { comments: { _id: req.body.id } } },
-    (err, result) => {
-      res.json(result);
-    }
-  );
-  /*
   Post.findById(req.params.id, (err, post) => {
-    if (err) return next(errors);
-    let index = req.body.index;
-    post.comments.splice(index, 1);
+    if (err) return next(err);
+    let spliced = post.comments.splice(req.body.commentIndex, 1);
     post.save();
-    res.json(post);
-  });*/
+    res.json(spliced);
+  });
 };
 
 //ADD A REPLY TO A COMMENT
@@ -159,7 +140,7 @@ exports.editComment = (req, res, next) => {
     let index = req.body.index;
     post.comments[index].comment = req.body.comment;
     post.save();
-    res.json(post.comments);
+    res.json(post.comments[index]);
   });
 };
 
