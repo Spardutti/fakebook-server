@@ -123,13 +123,14 @@ exports.newReply = (req, res, next) => {
   Post.findById(req.params.id, (err, post) => {
     if (err) return next(err);
     let index = req.body.index;
-    post.comments[index].reply.push({
+    let reply = {
       username: req.user.username,
-      author: req.user,
+      author: req.user._id,
       reply: req.body.reply,
-    });
+    };
+    post.comments[index].reply.push(reply);
     post.save();
-    res.json(post);
+    res.json(reply);
   });
 };
 
