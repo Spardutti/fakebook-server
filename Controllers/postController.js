@@ -20,6 +20,7 @@ exports.newPost = [
           author: req.user,
           image: "/images/" + req.file.filename,
           username: req.user.username,
+          comments: [],
         });
       } else {
         post = new Post({
@@ -27,6 +28,7 @@ exports.newPost = [
           body: req.body.body,
           author: req.user,
           username: req.user.username,
+          comments: [],
         });
       }
       post.save((err, post) => {
@@ -100,6 +102,7 @@ exports.newPostComment = (req, res, next) => {
       comment: req.body.comment,
       username: req.user.username,
       date: new Date(Date.now()),
+      reply: [],
     };
     post.comments.push(newComment);
     if (err) return next(err);
@@ -153,7 +156,7 @@ exports.editReply = (req, res, next) => {
     let replyIndex = req.body.replyIndex;
     post.comments[commentIndex].reply[replyIndex].reply = req.body.reply;
     post.save();
-    res.json(post.comments);
+    res.json(post.comments[commentIndex].reply[replyIndex]);
   });
 };
 
