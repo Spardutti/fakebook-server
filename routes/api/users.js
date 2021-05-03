@@ -33,6 +33,12 @@ router.get("/:id/current", userController.currentUser);
 //LOG IN USER
 router.post("/login", userController.userLogin);
 
+//LOG IN GOOGLE
+router.get("/google", userController.googleLogin);
+
+//GOOGLE REDIRECT
+router.get("/auth/google/redirect", userController.googleRedirect);
+
 //SEND FRIEND REQUEST
 router.put("/:id/request", jwtProtected, userController.friendRequest);
 

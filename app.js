@@ -8,6 +8,7 @@ var logger = require("morgan");
 //REQUIREDS
 require("dotenv").config();
 require("./auth/passport");
+require("./auth/google-auth");
 const cors = require("cors");
 const passport = require("passport");
 

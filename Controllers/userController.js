@@ -82,6 +82,16 @@ exports.createUser = [
   },
 ];
 
+//GOOGLE LOGIN
+exports.googleLogin = passport.authenticate("google", {
+  scope: ["profile"],
+});
+
+(exports.googleRedirect = passport.authenticate("google")),
+  (req, res, next) => {
+    res.json("redirect");
+  };
+
 //LOGIN USER
 exports.userLogin = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
