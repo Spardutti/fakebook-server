@@ -37,7 +37,7 @@ router.post("/login", userController.userLogin);
 router.get("/google", userController.googleLogin);
 
 //GOOGLE REDIRECT
-router.get("/auth/google/redirect", userController.googleRedirect);
+router.get("/sucess", userController.googleRedirect);
 
 //SEND FRIEND REQUEST
 router.put("/:id/request", jwtProtected, userController.friendRequest);

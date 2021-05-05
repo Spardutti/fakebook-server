@@ -83,18 +83,29 @@ exports.createUser = [
 ];
 
 //GOOGLE LOGIN
-exports.googleLogin = passport.authenticate("google", {
-  scope: ["profile"],
-});
+exports.googleLogin = (req, res, next) => {
+  passport.authenticate("google", { session: false, scope: ["profile"] })(
+    req,
+    res,
+    next
+  );
+};
 
-(exports.googleRedirect = passport.authenticate("google")),
-  (req, res, next) => {
-    res.json("redirect");
-  };
+exports.googleRedirect = (req, res, next) => {
+  passport.authenticate("google", { session: false }, (err, user) => {
+    if (err) return next(err);
+    if (user) {
+      const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
+        expiresIn: "24h",
+      });
+      res.redirect("http://localhost:3000/?token=" + token);
+    }
+  })(req, res, next);
+};
 
 //LOGIN USER
 exports.userLogin = (req, res, next) => {
-  passport.authenticate("local", { session: false }, (err, user, info) => {
+  passport.authenticate("local", { session: false }, (err, user) => {
     if (err) return next(err);
     if (!user) {
       res.status(401);

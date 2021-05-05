@@ -4,6 +4,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const cookieSession = require("cookie-session");
 
 //REQUIREDS
 require("dotenv").config();

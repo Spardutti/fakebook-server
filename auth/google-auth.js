@@ -8,20 +8,18 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "/users/auth/google/redirect",
+      callbackURL: "/users/sucess",
     },
     (accessToken, refreshToken, profile, done) => {
       //CHECK IF USER EXIST
       User.findOne({ googleId: profile.id }, (err, user) => {
         if (user) {
-          console.log("exist");
           done(null, user);
         } else {
           new User({
             username: profile.displayName,
             googleId: profile.id,
           }).save((err, newUser) => {
-            console.log("new user");
             done(null, newUser);
           });
         }
@@ -36,6 +34,6 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
-    done(user.id);
+    done(err, user.id);
   });
 });
