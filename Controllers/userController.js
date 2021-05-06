@@ -217,7 +217,7 @@ exports.changeProfilePic = (req, res, next) => {
 //LOG OUT
 exports.logout = (req, res, next) => {
   req.logout();
-  res.json("loged out");
+  res.json("logged out");
 };
 
 //GET ALL NON FRIENDS USERS

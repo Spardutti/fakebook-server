@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "/users/sucess",
+      callbackURL: "https://glacial-wildwood-15974.herokuapp.com/users/sucess",
     },
     (accessToken, refreshToken, profile, done) => {
       //CHECK IF USER EXIST
@@ -16,12 +16,22 @@ passport.use(
         if (user) {
           done(null, user);
         } else {
-          new User({
-            username: profile.displayName,
-            googleId: profile.id,
-          }).save((err, newUser) => {
-            done(null, newUser);
-          });
+          let splitName = profile.displayName.split(" ");
+          if (splitName.length > 1) {
+            new User({
+              username: splitName[0],
+              googleId: profile.id,
+            }).save((err, newUser) => {
+              done(null, newUser);
+            });
+          } else {
+            new User({
+              username: profile.displayName,
+              googleId: profile.id,
+            }).save((err, newUser) => {
+              done(null, newUser);
+            });
+          }
         }
       });
     }
