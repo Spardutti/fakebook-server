@@ -6,8 +6,9 @@ const userController = require("../../Controllers/userController");
 
 //SETTING MULTER
 const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
-const fileStorageEngine = multer.diskStorage({
+/*const fileStorageEngine = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./public/images");
   },
@@ -16,7 +17,7 @@ const fileStorageEngine = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: fileStorageEngine });
+const upload = multer({ storage: fileStorageEngine });*/
 /////////////////
 
 //VAR FOR PROTECTED ROUTES

@@ -6,6 +6,7 @@ const passport = require("passport");
 require("dotenv").config();
 const async = require("async");
 const fs = require("fs");
+const { uploadFile } = require("../s3");
 
 //GET CURRENT USER
 exports.currentUser = (req, res, next) => {
@@ -90,7 +91,7 @@ exports.googleLogin = (req, res, next) => {
     next
   );
 };
-
+//GOOGLE CALLBACK REDIRECT
 exports.googleRedirect = (req, res, next) => {
   passport.authenticate("google", { session: false }, (err, user) => {
     if (err) return next(err);
@@ -98,7 +99,9 @@ exports.googleRedirect = (req, res, next) => {
       const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
         expiresIn: "24h",
       });
-      res.redirect("http://localhost:3000/?token=" + token);
+      res.redirect(
+        "https://glacial-wildwood-15974.herokuapp.com/?token=" + token
+      );
     }
   })(req, res, next);
 };
@@ -195,21 +198,23 @@ exports.deleteFriend = (req, res, next) => {
 
 //CHANGE PROFILE PIC
 exports.changeProfilePic = (req, res, next) => {
-  User.findById(req.params.id, (err, user) => {
+  User.findById(req.params.id, async (err, user) => {
     if (err) return next(err);
     if (user.profilePic === "/images/Fakebook.png") {
-      user.profilePic = "/images/" + req.file.filename;
+      const result = await uploadFile(req.file);
+      console.log(result);
+      /* user.profilePic = req.file.filename;
       user.save();
-      res.json("avatar uploaded");
+      res.json("avatar uploaded");*/
     } else {
-      fs.unlink("public" + user.profilePic, (err) => {
+      const result = await uploadFile(req.file);
+      console.log(result);
+      /* fs.unlink(user.profilePic, (err) => {
         if (err) return next(err);
-        user.profilePic = "/images/" + req.file.filename;
-        user.save();
-        res.json(user);
-      });
-      //find a way to delete the file at path
-      // /images/req.file.filename
+      });*/
+      user.profilePic = result.Location;
+      user.save();
+      res.json({ imagePath: result.Key });
     }
   });
 };
