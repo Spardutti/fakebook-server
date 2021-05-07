@@ -100,7 +100,7 @@ exports.googleRedirect = (req, res, next) => {
         expiresIn: "24h",
       });
       res.redirect(
-        "https://glacial-wildwood-15974.herokuapp.com/?token=" + token
+        "https://spardutti.github.io/fakebook-client/?token=" + token
       );
     }
   })(req, res, next);
