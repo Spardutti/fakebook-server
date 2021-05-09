@@ -200,22 +200,10 @@ exports.deleteFriend = (req, res, next) => {
 exports.changeProfilePic = (req, res, next) => {
   User.findById(req.params.id, async (err, user) => {
     if (err) return next(err);
-    if (user.profilePic === "/images/Fakebook.png") {
-      const result = await uploadFile(req.file);
-      console.log(result);
-      /* user.profilePic = req.file.filename;
-      user.save();
-      res.json("avatar uploaded");*/
-    } else {
-      const result = await uploadFile(req.file);
-      console.log(result);
-      /* fs.unlink(user.profilePic, (err) => {
-        if (err) return next(err);
-      });*/
-      user.profilePic = result.Location;
-      user.save();
-      res.json({ imagePath: result.Key });
-    }
+    const result = await uploadFile(req.file);
+    user.profilePic = result.Location;
+    user.save();
+    res.json({ imagePath: result.Key });
   });
 };
 

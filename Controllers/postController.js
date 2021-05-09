@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 const async = require("async");
 const ObjectId = require("mongodb").ObjectId;
+const { uploadFile } = require("../s3");
 
 //CREATE A NEW POST
 exports.newPost = [
@@ -14,11 +15,12 @@ exports.newPost = [
     } else {
       let post;
       if (req.file) {
+        const result = await uploadFile(req.file);
         post = new Post({
           title: req.body.title,
           body: req.body.body,
           author: req.user,
-          image: "/images/" + req.file.filename,
+          image: result.Location,
           username: req.user.username,
           comments: [],
         });
