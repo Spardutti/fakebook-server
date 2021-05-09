@@ -8,7 +8,7 @@ const { uploadFile } = require("../s3");
 //CREATE A NEW POST
 exports.newPost = [
   body("title").notEmpty().withMessage("Title requierd"),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.json({ errors: errors.array() });
