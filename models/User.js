@@ -12,7 +12,11 @@ const UserSchema = new Schema({
   request: [
     { user: { type: Schema.Types.ObjectId, ref: "User" }, username: String },
   ],
-  profilePic: { type: String, default: "/images/Fakebook.png" },
+  profilePic: {
+    type: String,
+    default:
+      "https://fakebook-app.s3.us-east-2.amazonaws.com/038cfaa10c21903f06ef470d8f620550",
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);
